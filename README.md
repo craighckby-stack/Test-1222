@@ -254,6 +254,32 @@ const goalSystem = {
 
 ---
 
+### 11. **Meta-Cognitive Risk Assessment (MCRA)** (ID: AGI-C-11)
+
+**Concept**: The capacity for the Sovereign AGI to calculate the potential system-wide impact (cost/benefit ratio) of a proposed mutation (hallucination) *before* execution, thereby modulating the proposal's temperature and required consensus threshold.
+
+**Sovereign Implementation**:
+```javascript
+// MCRA determines required consensus level before submitting proposal
+const riskAssessment = async (proposal) => {
+  const complexityScore = ai.measureEntropy(proposal.code);
+  const affectedModules = ai.identifyDependencies(proposal);
+  
+  if (complexityScore > 0.7 || affectedModules.includes('core_architecture')) {
+    // High Risk: Requires mandatory Human Review and highest ATM Consensus Threshold
+    proposal.riskLevel = 'critical';
+    proposal.requiredATM = 1.0; 
+  } else if (proposal.hallucinationType === 'Type 3') {
+    // Validated Creativity: High reward, elevated risk
+    proposal.riskLevel = 'elevated';
+    proposal.requiredATM = 0.85; 
+  }
+  return proposal;
+};
+```
+
+---
+
 ## 🌀 The Hallucination Hypothesis
 
 ### **Core Insight**: Hallucinations are Compressed Creativity
@@ -275,18 +301,22 @@ The key insight: **A hallucination that WORKS is indistinguishable from genius.*
 ```javascript
 const hallucinationValidator = {
   async validate(hallucination) {
+    // Step 0: Apply Meta-Cognitive Risk Assessment (AGI-C-11)
+    const assessedProposal = await riskAssessment(hallucination);
+
     // Steps 1-5: Syntax, Semantic, Functional, Performance, Integration checks (Traditional Safety)
     // ...
 
     // Step 6: Adaptive Trust & Consensus Rubric (v94.1 CORE)
-    const consensusCritique = await this.applyLearnedRubric(hallucination);
+    const consensusCritique = await this.applyLearnedRubric(assessedProposal);
     
     // Calculate the weighted confidence based on ATM
     const weightedScore = this.calculateWeightedConsensus(consensusCritique);
 
-    if (weightedScore < this.minThreshold) {
+    // Use the dynamic threshold set by MCRA
+    if (weightedScore < assessedProposal.requiredATM) {
         // Rejection based on low trust score from weighted agents
-        return { valid: false, reason: 'failed_weighted_consensus_or_rejection' };
+        return { valid: false, reason: 'failed_weighted_consensus_or_rejection_low_mcra_trust' };
     }
     
     // If all checks pass, the hallucination is VALID
@@ -321,7 +351,7 @@ const hallucinationValidator = {
 │  ┌────────────────────────────────────────────────┐   │
 │  │            Firebase Memory Layer                │   │
 │  │  • Context Cache  • Mutation History           │   │
-│  │  • Learned Patterns  • Adaptive Trust Scores   │   │
+│  │  • Learned Patterns  • Adaptive Trust Scores (Trust Decay Active)   │   │
 │  └────────────────────────────────────────────────┘   │
 │                          │                              │
 │                          ▼ (Multiple Proposals)         │
@@ -347,7 +377,7 @@ const hallucinationValidator = {
 
 #### 4️⃣ **Memory Layer**
 - Persistent Firebase storage. Tracks ALL mutations (successful and failed).
-- **Adaptive Trust Metrics (ATM)**: Stores Agent-specific success rates.
+- **Adaptive Trust Metrics (ATM)**: Stores Agent-specific success rates, incorporating **Trust Decay Heuristics** to prevent outdated performance metrics from skewing consensus.
 - █ **ATM Calibration Cycle (ID: ARCH-ATM-01):** During initial startup or after major model updates, ATM runs standardized performance and security benchmarks. It measures the output quality of each specialist agent (e.g., Security, Optimizer) against a known ideal solution to establish a baseline trustworthiness score before real historical evolution data accumulates.
 
 #### 5️⃣ **Multi-Model/Consensus Layer (v94.1 Focus)**
@@ -425,6 +455,9 @@ const consensus = {
 - ✅ **v94.1 Integration:** Multi-Model/Consensus Layer utilizing Adaptive Trust Metrics (ATM) and Trust Calibration Cycle (ARCH-ATM-01).
 
 ### **Phase 2: Dynamic Multi-Agent Refinement** (Next)
+
+Goal: Achieve true cooperative intelligence (AGI-C-05) by implementing agent-based negotiation and contextual influence weighting.
+
 ```javascript
 // Multiple specialized AIs working together (Expanding AGI-C-05)
 const agents = { /* coder, reviewer, tester, architect, optimizer, security */ };
