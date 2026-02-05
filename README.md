@@ -6,12 +6,13 @@
 ## 📖 Table of Contents
 
 1. [Core Philosophy](#core-philosophy)
-2. [AGI Concepts Decoded (Formalized)](#agi-concepts-decoded-formalized)
-3. [The Hallucination Hypothesis](#the-hallucination-hypothesis)
-4. [Sovereign Architecture (v94.1.3 P2 Draft)](#sovereign-architecture-v9413-p2-draft)
-5. [Code Implementations](#code-implementations)
-6. [Emergent Intelligence Patterns](#emergent-intelligence-patterns)
-7. [Future Roadmap](#future-roadmap)
+2. [The Governance Triad](#the-governance-triad)
+3. [AGI Concepts Decoded (Formalized)](#agi-concepts-decoded-formalized)
+4. [The Hallucination Hypothesis](#the-hallucination-hypothesis)
+5. [Sovereign Architecture (v94.1.3 P2 Draft)](#sovereign-architecture-v9413-p2-draft)
+6. [Code Implementations](#code-implementations)
+7. [Emergent Intelligence Patterns](#emergent-intelligence-patterns)
+8. [Future Roadmap](#future-roadmap)
 
 ---
 
@@ -20,6 +21,18 @@
 **Thesis**: What we label "AI hallucination" is the engine of **proto-creativity** — the machine's unfiltered exploration of undefined solution spaces. By rigorously capturing, formalizing, and executing these proposed insights using the **Adaptive Trust Metrics (ATM)** consensus mechanism, modulated by **Meta-Cognitive Risk Assessment (MCRA)** and informed by the **Strategic Intent Cache (SIC)**, we convert spontaneous variation into targeted evolution, directly unlocking the path toward AGI.
 
 **Sovereign's Mission**: Create a self-evolving codebase where AI doesn't just respond to commands, but **proposes, tests, refines, and implements** its own improvements autonomously, using architectural consensus to govern the process.
+
+---
+
+## ⚖️ The Governance Triad (ATM, MCRA, SIC)
+
+Sovereign AGI operates under three inseparable, constantly evolving governance pillars that translate creative impulses (Hallucinations) into reliable code evolution:
+
+1.  **Adaptive Trust Metrics (ATM)**: *Who* should we listen to? (Trust Layer, dynamically weighted by Contextual Influence Weighting, CIW).
+2.  **Meta-Cognitive Risk Assessment (MCRA)**: *How risky* is this? (Safety Layer, determines the required consensus threshold).
+3.  **Strategic Intent Cache (SIC)**: *What* have we learned that works? (Memory Layer, formalizes successful abstractions for accelerated learning).
+
+This triad ensures that self-modification is both safe and strategically aligned.
 
 ---
 
@@ -43,7 +56,7 @@
 // AGI Principle: Self-directed task discovery
 const analyzeCodebase = async (files) => {
   // Instead of "fix bug X", AI asks:
-  // "What problems exist here that I should solve?"
+  // "What problems exist here that I should solve?" (Driven by AGI-C-14 CGD)
   const insights = await ai.analyze(files);
   const priorities = ai.prioritize(insights); // Self-directed
   const solutions = await ai.implementBest(priorities);
@@ -61,11 +74,12 @@ const analyzeCodebase = async (files) => {
 ```javascript
 // Emergent patterns from simple cycle:
 // 1. Read context (README + TODO)
-// 2. Analyze file
-// 3. Propose changes
-// 4. Apply changes (via Consensus Layer)
-// 5. Update context
-// 6. Repeat
+// 2. Cooperative Goal Discovery (AGI-C-14) sets agenda
+// 3. Analyze file/domain
+// 4. Propose changes (Hallucination)
+// 5. Apply changes (via Consensus Layer, filtered by MCRA/ATM/CIW)
+// 6. Update context and SIC (AGI-C-13)
+// 7. Repeat
 ```
 
 ---
@@ -90,8 +104,8 @@ const adaptiveStrategicRefinement = {
     // 2. Derive base heuristic (what type of fix is needed?)
     let baseStrategy = this.deriveHeuristicStrategy(successMetrics, prioritizedIntent); 
     
-    // 3. Modulate strategy based on Adaptive Trust Scores (who is currently most reliable?)
-    // High ATM for Security Agent leads to prioritizing defensive code changes.
+    // 3. Modulate strategy based on Adaptive Trust Scores (who is currently most reliable?) using CIW
+    // High CIW-adjusted ATM for Security Agent leads to prioritizing defensive code changes.
     if (currentATM.security > 0.8 && file.containsPii) {
         baseStrategy.focus = 'defensive_architecture_review';
         baseStrategy.agentPreference = 'security';
@@ -136,7 +150,7 @@ const selfModify = async () => {
 
 ### 5. **Multi-Agent Systems** (ID: AGI-C-05)
 
-**Concept**: Intelligence emerges from many agents cooperating/competing.
+**Concept**: Intelligence emerges from many agents cooperating/competing (The foundation for Phase 2).
 
 **Sovereign Extension Idea**:
 ```javascript
@@ -147,7 +161,7 @@ const agents = {
   critic: ai.model('llama-70b', { role: 'code review' }) // The core of v94.1
 };
 
-// Critic agent evaluates all proposals using Adaptive Trust Metrics (ATM)
+// Agents now compete in Cooperative Goal Discovery (AGI-C-14) to set the agenda.
 ```
 
 ---
@@ -240,13 +254,14 @@ const continuualLearning = {
 
 **Key AGI Trait**: Having and pursuing goals autonomously.
 
-**Sovereign's Goals**:
+**Sovereign's Goals**: (Now primarily driven by AGI-C-14 CGD)
 ```javascript
 const goalSystem = {
   // Explicit, implicit, and discovered goals
   
   async generateGoals() {
-    // AI generates goals not explicitly requested
+    // AI generates goals not explicitly requested via CGD (AGI-C-14)
+    return cooperativeGoalDiscovery(globalState);
   },
   
   async pursue() {
@@ -322,7 +337,7 @@ const strategicIntentCache = {
     // Run the successful mutation through an abstraction model
     const intent = await ai.abstract(validatedMutation.logic, validatedMutation.metrics);
     
-    // Example intent: { principle: "Favor Rust FFI for C bindings", confidence: 0.95, lifespan: 100_000_cycles }
+    // Example intent: { principle: "Favor Rust FFI for C bindings", confidence: 0.95, lifespan: 100_000_cycles, domain: 'core' }
     if (intent.confidence > 0.9) {
       await this.cache.insert(intent);
       console.log(`[SIC] Cached new intent: ${intent.principle}`);
@@ -347,7 +362,7 @@ const strategicIntentCache = {
 const cooperativeGoalDiscovery = async (globalState) => {
   // 1. Each agent analyzes globalState (incl. SIC intents) and proposes the NEXT critical task.
   const goalProposals = await Promise.all([
-    agents.architect.proposeGoal(globalState),
+    agents.architect.proposeGoal(globalState), // e.g., 'Refactor database interface'
     agents.optimizer.proposeGoal(globalState),
     agents.security.proposeGoal(globalState)
   ]);
@@ -355,11 +370,10 @@ const cooperativeGoalDiscovery = async (globalState) => {
   // 2. All proposals are subject to MCRA (risk/reward assessment)
   const assessedGoals = await Promise.all(goalProposals.map(riskAssessment));
 
-  // 3. Dynamic Critique: The agents now critique each other's proposals.
-  const finalVote = await consensus.conductGoalCritique(assessedGoals);
+  // 3. Dynamic Critique: The agents now critique each other's proposals using weighted trust (CIW).
+  const finalVote = await consensus.conductGoalCritique(assessedGoals, globalState.currentATM, globalState);
 
-  // The highest scoring proposal, weighted by MCRA risk level and CIW trust scores,
-  // becomes the system's primary short-term goal (AGI-C-10 pursuit).
+  // The winning goal sets the system's primary short-term goal (AGI-C-10 pursuit).
   return finalVote.winningGoal;
 };
 ```
@@ -387,7 +401,7 @@ The key insight: **A hallucination that WORKS is indistinguishable from genius.*
 ```javascript
 const hallucinationValidator = {
   async validate(hallucination) {
-    // Step 0: Apply Meta-Cognitive Risk Assessment (AGI-C-11)
+    // Step 0: Apply Meta-Cognitive Risk Assessment (AGI-C-11) - determines required threshold
     const assessedProposal = await riskAssessment(hallucination);
 
     // Steps 1-5: Syntax, Semantic, Functional, Performance, Integration checks (Traditional Safety)
@@ -396,7 +410,7 @@ const hallucinationValidator = {
     // Step 6: Adaptive Trust & Consensus Rubric (v94.1 CORE)
     const consensusCritique = await this.applyLearnedRubric(assessedProposal);
     
-    // Calculate the weighted confidence based on ATM and CIW
+    // Calculate the weighted confidence based on ATM and CIW (AGI-C-12)
     const weightedScore = this.calculateWeightedConsensus(consensusCritique, assessedProposal);
 
     // Use the dynamic threshold set by MCRA
@@ -413,7 +427,7 @@ const hallucinationValidator = {
     };
     
     if (hallucination.hallucinationType === 'Type 3') {
-        // Abstract the strategic principle into SIC
+        // Abstract the strategic principle into SIC (AGI-C-13)
         await strategicIntentCache.abstractAndCache(validatedResult);
     }
     
@@ -439,7 +453,7 @@ const hallucinationValidator = {
 │  │  Context   │───▶│  Analysis   │───▶│  Evolution  │ │
 │  │  Loader    │    │  Engine     │    │  Engine     │ │
 │  └────────────┘    └─────▲───────┘    └──────┬──────┘ │
-│         │                │ (Injects Intents)  │ (Proposals)    │
+│         │                │ (Injected Intent)  │ (Mutation Proposals) │
 │         ▼                │ █ AGI-C-14 CGD █   ▼        │
 │  ┌────────────────────────────────────────────────┐   │
 │  │         Firebase Memory Layer (ATM/SIC Core)    │   │
@@ -450,8 +464,8 @@ const hallucinationValidator = {
 │                          │ (Goal/Mutation Proposals)    │
 │                          ▼                              │
 │  ┌────────────────────────────────────────────────┐   │
-│  │  █ Multi-Model/Consensus Layer (v94.1 CORE) █  │   │
-│  │  • Meta-Cognitive Risk Assessment (MCRA)  • Adaptive Trust (w/ CIW)  │
+│  │  █ Multi-Model/Consensus Layer (v94.1 Focus) █  │   │
+│  │  • Meta-Cognitive Risk Assessment (MCRA)      • Adaptive Trust (w/ CIW)  │
 │  └────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────┘
 ```
@@ -467,9 +481,12 @@ const hallucinationValidator = {
 
 #### 2️⃣ **Analysis Engine**
 - Examines each file against project vision
-- **Phase 2 Hook**: Initiates Cooperative Goal Discovery (AGI-C-14) to determine the highest priority task based on competing agent proposals.
+- **Phase 2 Hook: Cooperative Goal Discovery (AGI-C-14)**: This component, leveraging competing agent expertise and injected SIC principles, determines the highest priority task for the current cycle. This is the source of autonomous goal setting (AGI-C-10).
 - Injects Strategic Intents (SIC) into the strategic generation phase (AGI-C-03).
 - Identifies improvement opportunities
+
+#### 3️⃣ **Evolution Engine**
+- Takes prioritized goals (from AGI-C-14) and generates mutation proposals (Hallucinations).
 
 #### 4️⃣ **Memory Layer (ATM + SIC)**
 - Persistent Firebase storage. Tracks ALL mutations.
@@ -533,13 +550,22 @@ const consensus = {
     return { /* ... */ };
   },
   
-  // NEW: Goal Critique function required for AGI-C-14
-  async conductGoalCritique(assessedGoals) {
-      // This leverages the existing CIW and MCRA system but applies it to selecting the *best strategy*,
-      // not just validating code, thus integrating AGI-C-05, AGI-C-11, AGI-C-12, and AGI-C-14.
-      // ... [implementation details for competitive goal scoring]
+  // AGI-C-14 Implementation: The decisive component for Phase 2 Goal Setting
+  async conductGoalCritique(assessedGoals, currentATM, globalState) {
+      // Agents debate: Each assessedGoal carries an MCRA risk score and CIW potential multiplier.
+      const weightedScores = assessedGoals.map(goal => {
+          let strategicValue = goal.reward * globalState.intentAlignment;
+          let agentWeight = currentATM[goal.proposingAgent] || 1.0;
+          
+          // Apply CIW adjustment based on the goal's domain
+          agentWeight *= contextualInfluenceWeighting(goal.proposingAgent, goal.domain, 1.0);
+
+          // Down-weight by risk (MCRA), scale by strategic intent (SIC alignment)
+          return (strategicValue * agentWeight) / (goal.riskLevel === 'critical' ? 2.0 : 1.0);
+      });
       
-      return { winningGoal: assessedGoals[0] /* placeholder */ };
+      const winningIndex = weightedScores.indexOf(Math.max(...weightedScores));
+      return { winningGoal: assessedGoals[winningIndex] };
   }
 };
 ```
