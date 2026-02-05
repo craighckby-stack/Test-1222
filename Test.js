@@ -29,6 +29,24 @@ describe('Utility Functions', () => {
             calculateTotal(items);
             expect(items).toEqual(originalItems);
         });
+
+        // IMPROVEMENT: Test input validation and error handling
+        test('should throw TypeError when input is null, undefined, or not an array', () => {
+            expect(() => calculateTotal(null)).toThrow(TypeError);
+            expect(() => calculateTotal(undefined)).toThrow(TypeError);
+            expect(() => calculateTotal('not an array')).toThrow(TypeError);
+        });
+
+        // IMPROVEMENT: Test robustness against non-numeric item properties
+        test('should calculate partial total when some item price/quantity values are non-numeric or missing', () => {
+            const robustItems = [
+                { price: 10, quantity: 2 },
+                { price: 'invalid', quantity: 5 }, // Should effectively contribute 0
+                { price: 5, quantity: 4 }
+            ];
+            // Expected total: (10 * 2) + (5 * 4) = 40.00
+            expect(calculateTotal(robustItems)).toBeCloseTo(40.00);
+        });
     });
 
     // Test suite for data transformation/formatting
@@ -43,6 +61,17 @@ describe('Utility Functions', () => {
 
         test('should handle negative numbers', () => {
             expect(formatCurrency(-99.99)).toBe('-$99.99');
+        });
+
+        // IMPROVEMENT: Edge case for very large numbers
+        test('should correctly handle and format very large numbers with proper grouping', () => {
+            expect(formatCurrency(123456789.9876)).toBe('$123,456,789.99');
+        });
+
+        // IMPROVEMENT: Handling numbers that require no rounding or specific trailing zeros
+        test('should handle numbers with exactly two decimal places correctly', () => {
+            expect(formatCurrency(42.00)).toBe('$42.00');
+            expect(formatCurrency(42.50)).toBe('$42.50');
         });
     });
 
@@ -62,6 +91,11 @@ describe('Utility Functions', () => {
             await expect(delayPromise).resolves.toBeUndefined();
             expect(setTimeout).toHaveBeenCalledTimes(1);
             expect(setTimeout).toHaveBeenCalledWith(expect.any(Function), delayTime);
+        });
+        
+        // CLEANUP: Ensure real timers are restored after this describe block.
+        afterAll(() => {
+            jest.useRealTimers();
         });
     });
 });
