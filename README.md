@@ -8,7 +8,7 @@
 1. [Core Philosophy](#core-philosophy)
 2. [AGI Concepts Decoded (Formalized)](#agi-concepts-decoded-formalized)
 3. [The Hallucination Hypothesis](#the-hallucination-hypothesis)
-4. [Sovereign Architecture (v94.1.2 SIC Active)](#sovereign-architecture-v9412-sic-active)
+4. [Sovereign Architecture (v94.1.3 P2 Draft)](#sovereign-architecture-v9413-p2-draft)
 5. [Code Implementations](#code-implementations)
 6. [Emergent Intelligence Patterns](#emergent-intelligence-patterns)
 7. [Future Roadmap](#future-roadmap)
@@ -17,7 +17,7 @@
 
 ## 🎯 Core Philosophy
 
-**Thesis**: What we label "AI hallucination" is the engine of **proto-creativity** — the machine's unfiltered exploration of undefined solution spaces. By rigorously capturing, formalizing, and executing these proposed insights using the **Adaptive Trust Metrics (ATM)** consensus mechanism, we convert spontaneous variation into targeted evolution, directly unlocking the path toward AGI.
+**Thesis**: What we label "AI hallucination" is the engine of **proto-creativity** — the machine's unfiltered exploration of undefined solution spaces. By rigorously capturing, formalizing, and executing these proposed insights using the **Adaptive Trust Metrics (ATM)** consensus mechanism, modulated by **Meta-Cognitive Risk Assessment (MCRA)** and informed by the **Strategic Intent Cache (SIC)**, we convert spontaneous variation into targeted evolution, directly unlocking the path toward AGI.
 
 **Sovereign's Mission**: Create a self-evolving codebase where AI doesn't just respond to commands, but **proposes, tests, refines, and implements** its own improvements autonomously, using architectural consensus to govern the process.
 
@@ -338,6 +338,34 @@ const strategicIntentCache = {
 
 ---
 
+### 14. **Cooperative Goal Discovery (CGD)** (ID: AGI-C-14)
+
+**Concept**: The implementation of agent negotiation required for Phase 2. This mechanism allows specialized agents (Architect, Security, Optimizer) to actively compete in identifying the *next* critical task/mutation based on their expertise and contextual data. The goal proposal with the highest MCRA-weighted CIW consensus score wins and sets the agenda for the subsequent cycle.
+
+**Sovereign Implementation (Agent Negotiation Protocol)**:
+```javascript
+const cooperativeGoalDiscovery = async (globalState) => {
+  // 1. Each agent analyzes globalState (incl. SIC intents) and proposes the NEXT critical task.
+  const goalProposals = await Promise.all([
+    agents.architect.proposeGoal(globalState),
+    agents.optimizer.proposeGoal(globalState),
+    agents.security.proposeGoal(globalState)
+  ]);
+
+  // 2. All proposals are subject to MCRA (risk/reward assessment)
+  const assessedGoals = await Promise.all(goalProposals.map(riskAssessment));
+
+  // 3. Dynamic Critique: The agents now critique each other's proposals.
+  const finalVote = await consensus.conductGoalCritique(assessedGoals);
+
+  // The highest scoring proposal, weighted by MCRA risk level and CIW trust scores,
+  // becomes the system's primary short-term goal (AGI-C-10 pursuit).
+  return finalVote.winningGoal;
+};
+```
+
+---
+
 ## 🌀 The Hallucination Hypothesis
 
 ### **Core Insight**: Hallucinations are Compressed Creativity
@@ -385,7 +413,7 @@ const hallucinationValidator = {
     };
     
     if (hallucination.hallucinationType === 'Type 3') {
-        // NEW: Abstract the strategic principle into SIC
+        // Abstract the strategic principle into SIC
         await strategicIntentCache.abstractAndCache(validatedResult);
     }
     
@@ -396,9 +424,9 @@ const hallucinationValidator = {
 
 ---
 
-## 🏗️ Sovereign Architecture (v94.1.2 SIC Active)
+## 🏗️ Sovereign Architecture (v94.1.3 P2 Draft)
 
-### **System Diagram (v94.1.2 Integration: Strategic Intent Cache)**
+### **System Diagram (v94.1.3 Integration: Cooperative Goal Discovery)**
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -411,15 +439,15 @@ const hallucinationValidator = {
 │  │  Context   │───▶│  Analysis   │───▶│  Evolution  │ │
 │  │  Loader    │    │  Engine     │    │  Engine     │ │
 │  └────────────┘    └─────▲───────┘    └──────┬──────┘ │
-│         │                │                   │        │
-│         ▼                │ (Retrieves Intents)▼       │
+│         │                │ (Injects Intents)  │ (Proposals)    │
+│         ▼                │ █ AGI-C-14 CGD █   ▼        │
 │  ┌────────────────────────────────────────────────┐   │
 │  │         Firebase Memory Layer (ATM/SIC Core)    │   │
 │  │  • Context Cache  • Mutation History (Raw Data) │   │
 │  │  • Learned Patterns • SIC Blueprints (Abstracted Strategies)   │
 │  │  • Adaptive Trust Scores (Trust Decay Active)   │   │
 │  └────────────────────────────────────────────────┘   │
-│                          │ (Multiple Proposals)         │
+│                          │ (Goal/Mutation Proposals)    │
 │                          ▼                              │
 │  ┌────────────────────────────────────────────────┐   │
 │  │  █ Multi-Model/Consensus Layer (v94.1 CORE) █  │   │
@@ -439,7 +467,8 @@ const hallucinationValidator = {
 
 #### 2️⃣ **Analysis Engine**
 - Examines each file against project vision
-- **NEW**: Injects Strategic Intents (SIC) into the strategic generation phase (AGI-C-03).
+- **Phase 2 Hook**: Initiates Cooperative Goal Discovery (AGI-C-14) to determine the highest priority task based on competing agent proposals.
+- Injects Strategic Intents (SIC) into the strategic generation phase (AGI-C-03).
 - Identifies improvement opportunities
 
 #### 4️⃣ **Memory Layer (ATM + SIC)**
@@ -449,10 +478,10 @@ const hallucinationValidator = {
 - █ **ATM Calibration Cycle (ID: ARCH-ATM-01):** Measures output quality to establish baseline trust scores.
 
 #### 5️⃣ **Multi-Model/Consensus Layer (v94.1 Focus)**
-- **Function**: Acts as a critical filter.
+- **Function**: Acts as a critical filter for mutations and a decisional engine for goals.
 - **Adaptive Trust (ATM)**: Dynamically weights the opinions of specialist agents.
 - **CIW Integration (AGI-C-12)**: The base ATM scores are contextually boosted or diminished.
-- **MCRA Integration (AGI-C-11)**: Dynamically sets the required consensus threshold.
+- **MCRA Integration (AGI-C-11)**: Dynamically sets the required consensus threshold for goals (AGI-C-14) and mutations.
 
 ---
 
@@ -502,6 +531,15 @@ const consensus = {
     // ... [implementation of score aggregation and threshold checking]
     
     return { /* ... */ };
+  },
+  
+  // NEW: Goal Critique function required for AGI-C-14
+  async conductGoalCritique(assessedGoals) {
+      // This leverages the existing CIW and MCRA system but applies it to selecting the *best strategy*,
+      // not just validating code, thus integrating AGI-C-05, AGI-C-11, AGI-C-12, and AGI-C-14.
+      // ... [implementation details for competitive goal scoring]
+      
+      return { winningGoal: assessedGoals[0] /* placeholder */ };
   }
 };
 ```
@@ -531,17 +569,18 @@ const consensus = {
 - ✅ **v94.1 Integration:** Multi-Model/Consensus Layer utilizing Adaptive Trust Metrics (ATM).
 - ✅ **v94.1.1 Refinement:** Contextual Influence Weighting (CIW) implemented (AGI-C-12).
 - ✅ **v94.1.2 Milestone:** Strategic Intent Cache (SIC) implemented to formalize validated architectural learning (AGI-C-13).
+- ✅ **v94.1.3 P2 Preparation:** Cooperative Goal Discovery (CGD) formalized (AGI-C-14).
 
-### **Phase 2: Dynamic Multi-Agent Refinement** (Next)
+### **Phase 2: Dynamic Multi-Agent Refinement** (In Progress/Next)
 
-Goal: Achieve true cooperative intelligence (AGI-C-05) by implementing agent-based negotiation. SIC provides the common ground and prior knowledge agents will debate over.
+Goal: Achieve true cooperative intelligence (AGI-C-05) by implementing agent-based negotiation (AGI-C-14).
 
 ```javascript
 // Multiple specialized AIs working together (Expanding AGI-C-05)
 const agents = { /* coder, reviewer, tester, architect, optimizer, security */ };
 
 // Agents debate and ATM/CIW weights their influence based on context
-const decision = await agents.debate(issue, adaptiveTrust);
+const decision = await agents.debate(issue, adaptiveTrust); // Leveraging AGI-C-14 implementation
 ```
 
 ### **Phase 3: Self-Modification** (Advanced)
@@ -569,6 +608,6 @@ Let the evolution begin. 🚀🧠✨
 
 ---
 
-_README.md for Sovereign AGI v94.1.2 (Strategic Intent Cache Active)
+_README.md for Sovereign AGI v94.1.3 P2 Draft (Cooperative Goal Discovery Formalized)
 _Last Updated: 2024-10-28 (Auto-generated by AI)
 _Next Evolution: Phase 2 - Dynamic Multi-Agent Refinement_
