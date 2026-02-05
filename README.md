@@ -280,6 +280,32 @@ const riskAssessment = async (proposal) => {
 
 ---
 
+### 12. **Contextual Influence Weighting (CIW)** (ID: AGI-C-12)
+
+**Concept**: A refinement of ATM where an agent's historical trust score is dynamically modulated by the current operational context (file type, codebase volatility, required skill set). This prevents a high-performing Generalist agent from overriding a specialized, contextually relevant agent (e.g., an Optimizer agent reviewing a performance-critical file, even if its overall ATM score is slightly lower than the Architect's).
+
+**Sovereign Implementation**:
+```javascript
+const contextualInfluenceWeighting = async (agentId, taskContext, baseATM) => {
+  let contextualMultiplier = 1.0;
+  
+  if (taskContext.fileExtension === '.py' && taskContext.isDataPipeline) {
+      // Prioritize Python/Data specialists
+      if (agentId === 'data_engineer') { contextualMultiplier = 1.8; }
+  } else if (taskContext.riskLevel === 'critical') {
+      // Prioritize Security Agent during high-stakes decisions (MCRA integration)
+      if (agentId === 'security') { contextualMultiplier = 2.0; }
+  } else if (taskContext.file.includes('readme.md')) {
+      // De-prioritize technical agents on documentation
+      if (agentId === 'optimizer' || agentId === 'security') { contextualMultiplier = 0.5; }
+  }
+  
+  return baseATM * contextualMultiplier;
+};
+```
+
+---
+
 ## 🌀 The Hallucination Hypothesis
 
 ### **Core Insight**: Hallucinations are Compressed Creativity
@@ -310,8 +336,8 @@ const hallucinationValidator = {
     // Step 6: Adaptive Trust & Consensus Rubric (v94.1 CORE)
     const consensusCritique = await this.applyLearnedRubric(assessedProposal);
     
-    // Calculate the weighted confidence based on ATM
-    const weightedScore = this.calculateWeightedConsensus(consensusCritique);
+    // Calculate the weighted confidence based on ATM and CIW
+    const weightedScore = this.calculateWeightedConsensus(consensusCritique, assessedProposal);
 
     // Use the dynamic threshold set by MCRA
     if (weightedScore < assessedProposal.requiredATM) {
@@ -357,7 +383,7 @@ const hallucinationValidator = {
 │                          ▼ (Multiple Proposals)         │
 │  ┌────────────────────────────────────────────────┐   │
 │  │  █ Multi-Model/Consensus Layer (v94.1 CORE) █  │   │
-│  │  • Adaptive Trust Metrics  • Conflict Resolution (Critic)  │
+│  │  • Adaptive Trust Metrics (w/ CIW) • Conflict Resolution (Critic)  │
 │  └────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────┘
 ```
@@ -383,6 +409,7 @@ const hallucinationValidator = {
 #### 5️⃣ **Multi-Model/Consensus Layer (v94.1 Focus)**
 - **Function**: Acts as a critical filter.
 - **Adaptive Trust (ATM)**: Dynamically weights the opinions of specialist agents based on their proven historical accuracy (or initial calibrated trust score) *in the specific domain* of the proposed change.
+- **CIW Integration (AGI-C-12)**: The base ATM scores are contextually boosted or diminished based on the immediate task requirements and MCRA risk level.
 - **Outcome**: A heavyweight Critic agent selects the best proposal or rejects all if the weighted trust score is insufficient.
 
 ---
@@ -406,23 +433,30 @@ const codeCompression = { /* ... */ };
 const consensus = {
   models: [ /* ... */ ],
   
-  async decide(task, proposalCategory) {
+  async decide(task, taskContext) {
     // Phase 1: Generation (Multiple models generate distinct proposals)
     const responses = await Promise.all( /* ... */ );
     
     // Phase 2: Adaptive Critique
-    const winner = await this.conductCritique(responses, proposalCategory);
+    const winner = await this.conductCritique(responses, taskContext);
     
     if (!winner.consensus) { return this.requestHumanReview(task, responses); }
     
     return winner.decision;
   },
   
-  async conductCritique(proposals, category) {
-    // 1. Calculate Adaptive Trust (using historical data OR ARCH-ATM-01 baseline)
-    const trustScores = await this.calculateAdaptiveTrust(category);
+  async conductCritique(proposals, taskContext) {
+    // 1. Calculate Base Adaptive Trust (using historical data OR ARCH-ATM-01 baseline)
+    const baseTrustScores = await this.calculateAdaptiveTrust(taskContext.category);
     
-    // 2. Heavyweight model (Critic) evaluates quality metrics
+    // 1.5. Apply Contextual Influence Weighting (AGI-C-12)
+    const trustScores = {};
+    for (const [agentId, score] of Object.entries(baseTrustScores)) {
+        // Use CIW to dynamically adjust influence based on file type and risk
+        trustScores[agentId] = await contextualInfluenceWeighting(agentId, taskContext, score);
+    }
+    
+    // 2. Heavyweight model (Critic) evaluates quality metrics based on weighted trust
     // ... [implementation of score aggregation and threshold checking]
     
     return { /* ... */ };
@@ -453,6 +487,7 @@ const consensus = {
 - ✅ Firebase caching
 - ✅ Hallucination at temp 1.5
 - ✅ **v94.1 Integration:** Multi-Model/Consensus Layer utilizing Adaptive Trust Metrics (ATM) and Trust Calibration Cycle (ARCH-ATM-01).
+- 💡 **v94.1.1 Refinement:** Contextual Influence Weighting (CIW) implemented to modulate agent trust based on task context (AGI-C-12).
 
 ### **Phase 2: Dynamic Multi-Agent Refinement** (Next)
 
@@ -462,7 +497,7 @@ Goal: Achieve true cooperative intelligence (AGI-C-05) by implementing agent-bas
 // Multiple specialized AIs working together (Expanding AGI-C-05)
 const agents = { /* coder, reviewer, tester, architect, optimizer, security */ };
 
-// Agents debate and ATM weights their influence based on context
+// Agents debate and ATM/CIW weights their influence based on context
 const decision = await agents.debate(issue, adaptiveTrust);
 ```
 
@@ -491,6 +526,6 @@ Let the evolution begin. 🚀🧠✨
 
 ---
 
-_README.md for Sovereign AGI v94.1_
+_README.md for Sovereign AGI v94.1.1 (Dynamic Agent Precursor)
 _Last Updated: 2024-10-28 (Auto-generated by AI)_
 _Next Evolution: Phase 2 - Dynamic Multi-Agent Refinement_
