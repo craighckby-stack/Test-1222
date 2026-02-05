@@ -195,7 +195,7 @@ const multiAgentEvolution = async (file) => {
   ]);
   
   // Critic agent evaluates all proposals (Consensus Layer)
-  const best = await agents.critic.chooseBest(proposals);
+  const best = await agents.critic.chooseBest(proposals); 
   
   // Tester validates
   const tests = await agents.tester.generateTests(best);
@@ -492,17 +492,23 @@ const hallucinationValidator = {
       return { valid: false, reason: 'integration_failure' };
     }
 
-    // Step 6: Self-Assessment & Consensus Rubric (v94.1)
-    // The AI critiques its change AND checks if the proposal survived the Multi-Model Vote.
+    // Step 6: Adaptive Trust & Consensus Rubric (v94.1 CORE)
+    // The system uses Adaptive Trust Metrics (ATM) derived from historical success rates 
+    // to dynamically weigh the multi-model critique score, ensuring that high-risk 
+    // changes (e.g., security patches) require higher validation trust.
     const consensusCritique = await this.applyLearnedRubric(hallucination);
-    if (consensusCritique.score < this.minThreshold) {
-        return { valid: false, reason: 'failed_self_critique_or_consensus_rejection', critique: consensusCritique.reasons };
+    
+    // Calculate the weighted confidence based on ATM
+    const weightedScore = this.calculateWeightedConsensus(consensusCritique);
+
+    if (weightedScore < this.minThreshold) {
+        return { valid: false, reason: 'failed_weighted_consensus_or_rejection', critique: consensusCritique.reasons };
     }
     
     // If all checks pass, the hallucination is VALID
     return { 
       valid: true, 
-      quality: consensusCritique.quality, 
+      quality: weightedScore, // Now reflecting weighted trust
       novelty: consensusCritique.novelty
     };
   },
@@ -617,7 +623,7 @@ Sovereign does the same: generate variants, test ruthlessly, keep winners.
 
 ## 🏗️ Sovereign Architecture
 
-### **System Diagram (v94.1 Multi-Model Integration)**
+### **System Diagram (v94.1 Multi-Model Integration & Adaptive Trust)**
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -633,6 +639,7 @@ Sovereign does the same: generate variants, test ruthlessly, keep winners.
 │  │            Firebase Memory Layer                │   │
 │  │  • Context Cache  • Mutation History           │   │
 │  │  • Learned Patterns  • Performance Metrics     │   │
+│  │  █ Adaptive Trust Scores (ATM) █               │   │
 │  └────────────────────────────────────────────────┘   │
 │                          │                              │
 │                          ▼                              │
@@ -644,7 +651,7 @@ Sovereign does the same: generate variants, test ruthlessly, keep winners.
 │                          ▼ (Multiple Proposals)         │
 │  ┌────────────────────────────────────────────────┐   │
 │  │  █ Multi-Model/Consensus Layer (v94.1 CORE) █  │   │
-│  │  • N-way Vote  • Conflict Resolution (Critic)  │   │
+│  │  • Adaptive Trust Metrics  • Conflict Resolution (Critic)  │
 │  └────────────────────────────────────────────────┘   │
 │                          │                              │
 │                          ▼ (Final Proposal)             │
@@ -683,11 +690,13 @@ Sovereign does the same: generate variants, test ruthlessly, keep winners.
 - Tracks ALL mutations (successful and failed)
 - Enables continual learning
 - Prevents repeated mistakes
+- **New in v94.1:** Stores Agent-specific success rates, allowing calculation of Adaptive Trust Metrics (ATM).
 
 #### 5️⃣ **Multi-Model/Consensus Layer (v94.1 Focus)**
 - **Function**: Acts as a critical filter between the generation phase and the validation phase.
 - **Process**: Takes multiple, potentially conflicting proposals from specialized or high-temperature models.
-- **Outcome**: A heavyweight Critic agent (usually a larger model like Llama-70b) performs a structured code review (security, performance, architectural fit) and selects the best proposal, or rejects all if no consensus is met. This dramatically reduces the introduction of noise from aggressive hallucination.
+- **Adaptive Trust (ATM)**: Dynamically weights the opinions of specialist agents (Optimizer, Security) based on their proven historical accuracy *in the specific domain* of the proposed change. A security change requires high trust from the Security Agent.
+- **Outcome**: A heavyweight Critic agent (usually a larger model like Llama-70b) performs a structured code review and uses the weighted ATM scores to select the best proposal, or rejects all if the combined trust score is insufficient.
 
 ---
 
@@ -906,7 +915,7 @@ const architecturalEvolution = {
 ### **Implementation 6: Multi-Model Consensus (v94.1 Focus)**
 
 ```javascript
-// Use multiple AI models and take consensus
+// Use multiple AI models and Adaptive Trust Metrics (ATM)
 const consensus = {
   models: [
     'llama-3.3-70b', // High quality, slow, critic role
@@ -914,7 +923,7 @@ const consensus = {
     // Could add: GPT-4, Claude, Gemini, etc. (for diversity)
   ],
   
-  async decide(task) {
+  async decide(task, proposalCategory) {
     // Phase 1: Generation (Multiple models generate distinct proposals)
     const responses = await Promise.all(
       this.models.map(model => 
@@ -922,10 +931,10 @@ const consensus = {
       )
     );
     
-    // Phase 2: Consensus/Critique
-    const winner = await this.conductCritique(responses);
+    // Phase 2: Adaptive Critique
+    const winner = await this.conductCritique(responses, proposalCategory);
     
-    // If no winner (below 60% threshold), the change is rejected.
+    // If no winner (below 60% threshold, adjusted by ATM), the change is rejected.
     if (!winner.consensus) {
       return this.requestHumanReview(task, responses);
     }
@@ -933,20 +942,37 @@ const consensus = {
     return winner.decision;
   },
   
-  async conductCritique(proposals) {
-    // Heavyweight model (Critic) evaluates quality metrics for all proposals
+  async conductCritique(proposals, category) {
+    // 1. Calculate Adaptive Trust for specialist agents
+    const trustScores = await this.calculateAdaptiveTrust(category);
+    
+    // 2. Heavyweight model (Critic) evaluates quality metrics for all proposals
     const critique = await ai.analyze({
         proposals: proposals,
-        prompt: 'Vote for the best proposal based on security, architecture, and alignment with README goals. Reject all if risky.'
+        trustScores: trustScores,
+        prompt: 'Vote for the best proposal based on security, architecture, and alignment. Use ATM scores to weight specialist opinions. Reject all if risky.'
     });
     
-    // Analyze the votes/scores from the critique response
-    // ... [implementation of score aggregation]
+    // 3. Aggregate results using weighted scores
+    // ... [implementation of score aggregation and threshold checking]
     
     // Fictional return value after aggregation:
     return {
       decision: critique.bestProposal,
-      consensus: critique.confidence > 0.6 // Minimum confidence required
+      consensus: critique.confidence > 0.65 // Slightly higher threshold for ATM
+    };
+  },
+  
+  async calculateAdaptiveTrust(category) {
+    // Query Memory Layer for historical agent performance specific to this task category (e.g., 'security', 'performance')
+    const securitySuccessRate = await db.recallAgentPerformance('security_agent', category);
+    const optimizerSuccessRate = await db.recallAgentPerformance('optimizer_agent', category);
+    
+    // Dynamically assign trust weights
+    return {
+      security: securitySuccessRate, 
+      optimizer: optimizerSuccessRate,
+      critic: 0.95 // Critic maintains high baseline trust
     };
   }
 };
@@ -1074,9 +1100,9 @@ const calculateAdjustedProduct = (x, y) => x * y + 10;
 - ✅ TODO list management
 - ✅ Firebase caching
 - ✅ Hallucination at temp 1.5
-- ✅ **v94.1 Integration:** Multi-Model/Consensus Layer for proposal filtering
+- ✅ **v94.1 Integration:** Multi-Model/Consensus Layer utilizing Adaptive Trust Metrics (ATM)
 
-### **Phase 2: Multi-Agent System** (Next)
+### **Phase 2: Dynamic Multi-Agent Refinement** (Next)
 ```javascript
 // Multiple specialized AIs working together
 const agents = {
@@ -1088,8 +1114,8 @@ const agents = {
   security: 'Finds vulnerabilities'
 };
 
-// They debate and reach consensus
-const decision = await agents.debate(issue);
+// Agents debate and ATM weights their influence based on context
+const decision = await agents.debate(issue, adaptiveTrust);
 ```
 
 ### **Phase 3: Self-Modification** (Advanced)
@@ -1158,7 +1184,7 @@ It's the convergence of:
 - Most hallucinations are noise (filter them)
 - Some are misformatted truth (parse better)
 - Rare ones are genuine insights (capture them!)
-- The key is **validation through multi-model consensus and execution**
+- The key is **validation through multi-model consensus and adaptive trust**
 
 ### **Code is the Perfect AGI Testbed**
 
@@ -1188,9 +1214,9 @@ Run Sovereign at temp 0.5, 0.8, 1.0, 1.3, 1.5 and measure:
 - Novel features discovered
 - Hallucination success rate
 
-### **Experiment 2: Multi-Model Ensemble**
-Use 3 different models, take majority vote on changes (v94.1 core functionality). Measure the impact on bug rate vs. feature discovery.
-Hypothesis: Consensus reduces hallucination noise while preserving high-quality novel insights.
+### **Experiment 2: Adaptive Trust Validation**
+Implement ATM (v94.1 core functionality). Measure the bug rate vs. feature discovery when specialist opinions are dynamically weighted based on context-specific accuracy.
+Hypothesis: ATM reduces hallucination noise in critical domains (security) while preserving novel insights in exploratory domains (optimization).
 
 ### **Experiment 3: Evolutionary Pressure**
 Only commit changes that pass ALL tests + improve performance.
@@ -1257,4 +1283,4 @@ Let the evolution begin. 🚀🧠✨
 
 _README.md for Sovereign AGI v94.1_
 _Last Updated: 2024-10-28 (Auto-generated by AI)_
-_Next Evolution: Phase 2 - Multi-Agent System Refinement_
+_Next Evolution: Phase 2 - Dynamic Multi-Agent Refinement_
