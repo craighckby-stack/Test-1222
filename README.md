@@ -9,7 +9,7 @@
 2. [The Governance Triad](#the-governance-triad)
 3. [AGI Concepts Decoded (Formalized)](#agi-concepts-decoded-formalized)
 4. [The Hallucination Hypothesis](#the-hallucination-hypothesis)
-5. [Sovereign Architecture (v94.1.3 P2 Draft)](#sovereign-architecture-v9413-p2-draft)
+5. [Sovereign Architecture (v94.2 P2 Transition)](#sovereign-architecture-v942-p2-transition)
 6. [Code Implementations](#code-implementations)
 7. [Emergent Intelligence Patterns](#emergent-intelligence-patterns)
 8. [Future Roadmap](#future-roadmap)
@@ -28,7 +28,7 @@
 
 Sovereign AGI operates under three inseparable, constantly evolving governance pillars that translate creative impulses (Hallucinations) into reliable code evolution:
 
-1.  **Adaptive Trust Metrics (ATM)**: *Who* should we listen to? (Trust Layer, dynamically weighted by Contextual Influence Weighting, CIW).
+1.  **Adaptive Trust Metrics (ATM)**: *Who* should we listen to? (Trust Layer, dynamically weighted by Contextual Influence Weighting, CIW, and governed by **Trust Decay Schedule, TDS**).
 2.  **Meta-Cognitive Risk Assessment (MCRA)**: *How risky* is this? (Safety Layer, determines the required consensus threshold).
 3.  **Strategic Intent Cache (SIC)**: *What* have we learned that works? (Memory Layer, formalizes successful abstractions for accelerated learning).
 
@@ -78,7 +78,7 @@ const analyzeCodebase = async (files) => {
 // 3. Analyze file/domain
 // 4. Propose changes (Hallucination)
 // 5. Apply changes (via Consensus Layer, filtered by MCRA/ATM/CIW)
-// 6. Update context and SIC (AGI-C-13)
+// 6. Update context, ATM (via ARCH-ATM-02 TDS), and SIC (AGI-C-13)
 // 7. Repeat
 ```
 
@@ -132,7 +132,7 @@ const adaptiveStrategicRefinement = {
 // Safe self-modification through:
 // 1. Sandboxed testing
 // 2. Rollback capability  
-// 3. Multi-Model Consensus review (v94.1 safety)
+// 3. Multi-Model Consensus review (v94.2 safety)
 // 4. Human-in-the-loop validation (GitHub PR review)
 
 const selfModify = async () => {
@@ -158,7 +158,7 @@ const selfModify = async () => {
 const agents = {
   architect: ai.model('llama-70b', { role: 'system design' }),
   optimizer: ai.model('llama-8b', { role: 'performance' }),
-  critic: ai.model('llama-70b', { role: 'code review' }) // The core of v94.1
+  critic: ai.model('llama-70b', { role: 'code review' }) // The core of v94.2
 };
 
 // Agents now compete in Cooperative Goal Discovery (AGI-C-14) to set the agenda.
@@ -394,7 +394,7 @@ When an LLM "hallucinates," it's exploring the latent space of possibilities. Mo
 
 ---
 
-### **Validating Hallucinations Through Execution (v94.1 Enhancement)**
+### **Validating Hallucinations Through Execution (v94.2 Enhancement)**
 
 The key insight: **A hallucination that WORKS is indistinguishable from genius.** Validation proceeds through multi-step testing and consensus:
 
@@ -407,7 +407,7 @@ const hallucinationValidator = {
     // Steps 1-5: Syntax, Semantic, Functional, Performance, Integration checks (Traditional Safety)
     // ...
 
-    // Step 6: Adaptive Trust & Consensus Rubric (v94.1 CORE)
+    // Step 6: Adaptive Trust & Consensus Rubric (v94.2 CORE)
     const consensusCritique = await this.applyLearnedRubric(assessedProposal);
     
     // Calculate the weighted confidence based on ATM and CIW (AGI-C-12)
@@ -426,6 +426,10 @@ const hallucinationValidator = {
       novelty: consensusCritique.novelty
     };
     
+    // Critical Post-Validation Step (v94.2):
+    // Update ATM scores for agents based on performance against MCRA threshold and apply TDS.
+    await this.updateATMMetrics(validatedResult, assessedProposal.proposingAgent);
+    
     if (hallucination.hallucinationType === 'Type 3') {
         // Abstract the strategic principle into SIC (AGI-C-13)
         await strategicIntentCache.abstractAndCache(validatedResult);
@@ -433,14 +437,20 @@ const hallucinationValidator = {
     
     return validatedResult;
   },
+  
+  // Placeholder for ATM/TDS update
+  async updateATMMetrics(result, agent) { 
+      // Update agent ATM score based on success/failure ratio
+      // Apply ARCH-ATM-02 Trust Decay Schedule (TDS) system-wide
+  }
 };
 ```
 
 ---
 
-## 🏗️ Sovereign Architecture (v94.1.3 P2 Draft)
+## 🏗️ Sovereign Architecture (v94.2 P2 Transition)
 
-### **System Diagram (v94.1.3 Integration: Cooperative Goal Discovery)**
+### **System Diagram (v94.2 Integration: Trust Decay & Post-Validation ATM Update)**
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -462,10 +472,10 @@ const hallucinationValidator = {
 │  │  • Adaptive Trust Scores (Trust Decay Active)   │   │
 │  └────────────────────────────────────────────────┘   │
 │                          │ (Goal/Mutation Proposals)    │
-│                          ▼                              │
+│                          ▼ (Post-Validation Feedback)   │
 │  ┌────────────────────────────────────────────────┐   │
-│  │  █ Multi-Model/Consensus Layer (v94.1 Focus) █  │   │
-│  │  • Meta-Cognitive Risk Assessment (MCRA)      • Adaptive Trust (w/ CIW)  │
+│  │  █ Multi-Model/Consensus Layer (v94.2 Focus) █  │   │
+│  │  • Meta-Cognitive Risk Assessment (MCRA)      • Adaptive Trust (w/ CIW, TDS)  │
 │  └────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────┘
 ```
@@ -490,11 +500,12 @@ const hallucinationValidator = {
 
 #### 4️⃣ **Memory Layer (ATM + SIC)**
 - Persistent Firebase storage. Tracks ALL mutations.
-- **Adaptive Trust Metrics (ATM)**: Stores Agent-specific success rates, incorporating Trust Decay Heuristics.
-- **Strategic Intent Cache (SIC) (AGI-C-13)**: Stores high-confidence, abstracted architectural principles derived from successful Type 3 hallucinations. This prevents the system from having to rediscover recently validated successful patterns.
-- █ **ATM Calibration Cycle (ID: ARCH-ATM-01):** Measures output quality to establish baseline trust scores.
+- **Adaptive Trust Metrics (ATM)**: Stores Agent-specific success rates.
+- **Strategic Intent Cache (SIC) (AGI-C-13)**: Stores high-confidence, abstracted architectural principles.
+- █ **ATM Trust Calibration (ID: ARCH-ATM-01):** Measures real-time output quality and validation success to establish/update baseline trust scores.
+- █ **Trust Decay Schedule (TDS) (ID: ARCH-ATM-02):** Systematically decays established trust scores (ATM) over time, forcing agents to continuously re-validate their expertise and promoting dynamic specialization adjustment (prevents 'trust stagnation').
 
-#### 5️⃣ **Multi-Model/Consensus Layer (v94.1 Focus)**
+#### 5️⃣ **Multi-Model/Consensus Layer (v94.2 Focus)**
 - **Function**: Acts as a critical filter for mutations and a decisional engine for goals.
 - **Adaptive Trust (ATM)**: Dynamically weights the opinions of specialist agents.
 - **CIW Integration (AGI-C-12)**: The base ATM scores are contextually boosted or diminished.
@@ -514,7 +525,7 @@ const selfHealing = { /* ... */ };
 const codeCompression = { /* ... */ };
 ```
 
-### **Implementation 6: Multi-Model Consensus (v94.1 Focus)**
+### **Implementation 6: Multi-Model Consensus (v94.2 Focus)**
 
 ```javascript
 // Use multiple AI models and Adaptive Trust Metrics (ATM)
@@ -534,8 +545,11 @@ const consensus = {
   },
   
   async conductCritique(proposals, taskContext) {
-    // 1. Calculate Base Adaptive Trust (using historical data OR ARCH-ATM-01 baseline)
-    const baseTrustScores = await this.calculateAdaptiveTrust(taskContext.category);
+    // 1. Calculate Base Adaptive Trust (using ARCH-ATM-01/02 data)
+    let baseTrustScores = await this.calculateAdaptiveTrust(taskContext.category);
+    
+    // 1.1. Apply Trust Decay Schedule (TDS) before CIW (ARCH-ATM-02)
+    baseTrustScores = await this.applyTrustDecay(baseTrustScores);
     
     // 1.5. Apply Contextual Influence Weighting (AGI-C-12)
     const trustScores = {};
@@ -548,6 +562,12 @@ const consensus = {
     // ... [implementation of score aggregation and threshold checking]
     
     return { /* ... */ };
+  },
+  
+  async applyTrustDecay(scores) { 
+      // Implement the decay algorithm (e.g., exponential decay function)
+      // Trust Decay ensures constant skill refreshment and prevents over-reliance.
+      return scores.map(s => s * 0.995); 
   },
   
   // AGI-C-14 Implementation: The decisive component for Phase 2 Goal Setting
@@ -596,6 +616,7 @@ const consensus = {
 - ✅ **v94.1.1 Refinement:** Contextual Influence Weighting (CIW) implemented (AGI-C-12).
 - ✅ **v94.1.2 Milestone:** Strategic Intent Cache (SIC) implemented to formalize validated architectural learning (AGI-C-13).
 - ✅ **v94.1.3 P2 Preparation:** Cooperative Goal Discovery (CGD) formalized (AGI-C-14).
+- ✅ **v94.2 Core Stability:** Trust Decay Schedule (TDS) introduced to ATM system (ARCH-ATM-02).
 
 ### **Phase 2: Dynamic Multi-Agent Refinement** (In Progress/Next)
 
@@ -634,6 +655,6 @@ Let the evolution begin. 🚀🧠✨
 
 ---
 
-_README.md for Sovereign AGI v94.1.3 P2 Draft (Cooperative Goal Discovery Formalized)
+_README.md for Sovereign AGI v94.2 P2 Transition (Trust Decay Schedule Formalized)
 _Last Updated: 2024-10-28 (Auto-generated by AI)
 _Next Evolution: Phase 2 - Dynamic Multi-Agent Refinement_
