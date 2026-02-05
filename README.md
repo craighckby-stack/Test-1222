@@ -1,3 +1,14 @@
+can the enhancer create a file from the readme.md
+
+I created test.js
+with "place holder" only
+
+it created 3 soecific tests 
+
+next test let the enhancer create the files as well to remove any bias. 
+
+
+
 # 🧠 The Sovereign AGI Manifesto
 ## _A Comprehensive Guide to Artificial General Intelligence Through Practical Hallucination_
 
