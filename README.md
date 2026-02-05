@@ -70,26 +70,36 @@ const analyzeCodebase = async (files) => {
 
 ---
 
-### 3. **Meta-Learning (Learning to Learn)** (ID: AGI-C-03)
+### 3. **Adaptive Strategic Refinement** (ID: AGI-C-03)
 
-**Concept**: Systems that improve their own learning process.
+**Concept**: Systems that improve their own learning process, modulated by the current reliability scores of specialized agents (ATM).
 
-**Sovereign's Meta-Learning**:
+**Sovereign's Approach**:
 ```javascript
-// The AI learns WHAT to look for based on past success
-const metaLearningCycle = {
-  memory: [], // Past mutations and their outcomes
+// The AI learns WHAT strategy (and which agent) is most reliable based on ATM and history.
+const adaptiveStrategicRefinement = {
+  memory: db.collection('sovereign_memory'), // Persistent storage (Ref: Memory Layer)
   
-  async evolve(file) {
-    // Analyze what worked before
-    const successPatterns = this.memory.filter(m => m.success);
-    // Adjust strategy based on patterns
-    const strategy = this.deriveStrategy(successPatterns);
-    // Apply learned strategy
-    const mutation = await ai.mutate(file, { strategy });
-    // Record outcome for future learning
-    this.memory.push({ mutation, success: await test(mutation) });
-    return mutation;
+  async refineStrategy(file, currentATM) {
+    // 1. Analyze historical outcomes tied to specific agents/strategies
+    const successMetrics = await this.memory.getSuccessMetrics(); 
+
+    // 2. Derive base heuristic (what type of fix is needed?)
+    let baseStrategy = this.deriveHeuristicStrategy(successMetrics); 
+    
+    // 3. Modulate strategy based on Adaptive Trust Scores (who is currently most reliable?)
+    // High ATM for Security Agent leads to prioritizing defensive code changes.
+    if (currentATM.security > 0.8 && file.containsPii) {
+        baseStrategy.focus = 'defensive_architecture_review';
+        baseStrategy.agentPreference = 'security';
+    } else if (currentATM.optimizer > 0.9) {
+        baseStrategy.focus = 'performance_refactoring';
+        baseStrategy.agentPreference = 'optimizer';
+    }
+    
+    // 4. Apply refinement and generate mutation proposal
+    const proposal = await ai.mutate(file, baseStrategy); 
+    return proposal;
   }
 };
 ```
@@ -438,7 +448,7 @@ const decision = await agents.debate(issue, adaptiveTrust);
 
 > *"What happens if we give an AI creative freedom, clear goals, and an environment where it can learn from its mistakes?"*
 
---- 
+---
 
 **🎭 "A hallucination that works is indistinguishable from genius."**
 
